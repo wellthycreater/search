@@ -1,73 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>우편번호 및 도로명주소 조회</title>
-  <style>
-    .container {
-      width: 400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 5px;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-    }
-    #result {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>우편번호 및 도로명주소 검색</title>
+    <style>
+        #searchBox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #searchInput {
+            width: 200px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        #searchButton {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #resultBox {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #resultText {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>우편번호 및 도로명주소 조회</h2>
-    <form id="search-form">
-      <label for="address">상세 주소</label>
-      <input type="text" id="address" placeholder="도로명, 건물명 또는 지번을 입력하세요" required>
-      <button type="submit">조회</button>
-    </form>
-    <div id="result"></div>
-  </div>
+    <div id="searchBox">
+        <input type="text" id="searchInput" placeholder="우편번호나 도로명 주소를 입력하세요">
+        <button id="searchButton">검색</button>
+     </div>   
+        <input type="text" id="searchInput" placeholder="상세주소를 입력하세요">
+    <div id="resultBox">
+        <p id="resultText"></p>
+    </div>
 
-  <script>
-    document.getElementById("search-form").addEventListener("submit", function (event) {
-      event.preventDefault();
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        document.getElementById("searchButton").addEventListener("click", searchAddress);
 
-      var address = document.getElementById("address").value;
-      var apiUrl = "https://dapi.kakao.com/v2/local/search/address.json?query=" + encodeURIComponent(address);
+        function searchAddress() {
+            var addressInput = document.getElementById("searchInput").value;
 
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", apiUrl);
-      xhr.setRequestHeader("Authorization", "KakaoAK {6c040629ac93f28aaae8dce8b3f69ed1}");
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var response = JSON.parse(xhr.responseText);
-          if (response.documents.length > 0) {
-            var firstResult = response.documents[0];
-            var zonecode = firstResult.zone_code;
-            var roadAddress = firstResult.road_address ? firstResult.road_address.address_name : "";
-            var jibunAddress = firstResult.address.address_name;
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    var resultText = document.getElementById("resultText");
 
-            var resultElement = document.getElementById("result");
-            resultElement.innerHTML = "우편번호: " + zonecode + "<br>";
-            resultElement.innerHTML += "도로명주소: " + roadAddress + "<br>";
-            resultElement.innerHTML += "지번주소: " + jibunAddress;
-          } else {
-            document.getElementById("result").innerHTML = "검색 결과가 없습니다.";
-          }
+                    if (data.userSelectedType === 'R') {  // 도로명 주소일 경우
+                        resultText.textContent = "도로명 주소: " + data.roadAddress;
+                    } else {  // 지번 주소일 경우
+                        resultText.textContent = "지번 주소: " + data.jibunAddress;
+                    }
+
+                    document.getElementById("resultBox").style.display = "block";
+                }
+            }).open({
+                q: addressInput
+            });
         }
-      };
-      xhr.send();
-    });
-  </script>
+    </script>
 </body>
 </html>
