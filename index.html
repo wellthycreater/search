@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>도로명주소 검색</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>도로명주소 검색</h1>
+    <input type="text" id="search-input" placeholder="도로명주소를 입력하세요">
+    <button id="search-button">검색</button>
+    <div id="result"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+<style>
+    .container {
+  text-align: center;
+  margin-top: 100px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+input[type="text"] {
+  padding: 5px;
+  width: 300px;
+  margin: 10px;
+}
+
+button {
+  padding: 5px 10px;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+}
+</style>
+<script>
+    window.onload = function() {
+  var searchButton = document.getElementById("search-button");
+  searchButton.onclick = function() {
+    var searchInput = document.getElementById("search-input").value;
+    searchAddress(searchInput);
+  };
+};
+
+function searchAddress(address) {
+  // 여기에서 도로명주소 검색을 처리하는 로직을 작성합니다.
+  // 예시로 간단하게 콘솔에 출력하도록 구현했습니다.
+  console.log("검색한 도로명주소:", address);
+  
+  // 검색 결과를 화면에 표시하기 위해 DOM을 조작합니다.
+  var resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = "검색한 도로명주소: " + address;
+}
+</script>
+</html>
